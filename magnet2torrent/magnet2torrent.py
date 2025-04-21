@@ -54,14 +54,14 @@ def magnet_to_torrent(magnet_link: str,
     start_time = time.time()
     while not handle.status().has_metadata:
         if time.time() - start_time > timeout:
-            print("Metadata downloading timed out!")
+            print("\nMetadata downloading timed out!")
             sys.exit(1)
 
         sys.stdout.write(".")
         sys.stdout.flush()
         time.sleep(1)
 
-    print("Metadata downloading completed.")
+    print("\nMetadata downloading completed.")
 
     torrent_info = handle.torrent_file()
 
@@ -71,7 +71,7 @@ def magnet_to_torrent(magnet_link: str,
 
     torrent = lt.create_torrent(torrent_info)
     torrent_filename = (
-        f"{parse_magnet_link(magnet_link)[1]}"
+        f"{parse_magnet_link(magnet_link)[0][:truncation]}"
         ".torrent"
     )
 
