@@ -70,15 +70,16 @@ def magnet_to_torrent(magnet_link: str,
         sys.exit(1)
 
     torrent = lt.create_torrent(torrent_info)
-    torrent_filename = (
+    torrent_file_path = (
+        Path(saved_path) /
         f"{parse_magnet_link(magnet_link)[0][:truncation]}"
         ".torrent"
     )
 
-    with open(torrent_filename, "wb") as torrent_file:
+    with open(torrent_file_path, "wb") as torrent_file:
         torrent_file.write(lt.bencode(torrent.generate()))
 
-    print(f"Torrent file has been created: {torrent_filename}")
+    print(f"Torrent file has been created: {torrent_file_path.name}")
 
 
 def main() -> None:
@@ -101,14 +102,18 @@ def main() -> None:
         ).strip()
         if not saved_path_input:
             saved_path_input = str(Path(__file__).parent)
-        if Path(saved_path_input).exists() and Path(saved_path_input).is_dir():
-            break
+        if Path(saved_path_input).exists():
+            if Path(saved_path_input).is_dir():
+                break
+            else:
+                print(
+                    "Invalid input. Please try again. "
+                    "Please input a valid directory. "
+                )
         else:
-            print(
-                "Invalid input. Please try again. "
-                "Please input a valid directory. "
-            )
-    Path(saved_path_input).mkdir(parents=True, exist_ok=True)
+            Path(saved_path_input).mkdir(parents=True, exist_ok=True)
+            print(f'The directory "{saved_path_input}" created.')
+            break
 
     while True:
         timeout_input = input(
